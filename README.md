@@ -5,7 +5,7 @@ Command line arguments parser
 
 ## Syntax
 
-Set the actions
+Simple app with a simple action (`sbt run doAction`)
 ```
 object SimpleApp {
   val parser = new Parser()
@@ -14,6 +14,30 @@ object SimpleApp {
     description = "print Hello World",
     task = {
       println("Hello World.")
+    }
+  )
+  
+  def main(args: Array[String]) { 
+    val (actions, _) = parser.parse(args)
+    actions.foreach(_.execute)
+  }
+}
+```
+
+Simple app with a parameters (`sbt run doAction --word World`)
+```
+object SimpleApp {
+  val parser = new Parser()
+  val P1 = parser register new Param[String](
+    cmd = "--word",
+    description = "word to print",
+    defaultValue = "Not specified"
+  )
+  parser register new Action(
+    cmd = "doAction",
+    description = "print Hello World",
+    task = {
+      println(s"Hello " + P1.value + ".")
     }
   )
   
