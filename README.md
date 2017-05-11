@@ -6,7 +6,7 @@ Command line arguments parser
 ## Syntax
 
 Simple app with a simple action (`sbt run doAction`)
-```
+```scala
 object SimpleApp {
   val parser = new Parser()
   parser register new Action(
@@ -25,7 +25,7 @@ object SimpleApp {
 ```
 
 Simple app with a parameters (`sbt run doAction --word World`)
-```
+```scala
 object SimpleApp {
   val parser = new Parser()
   val P1 = parser register new Param[String](
