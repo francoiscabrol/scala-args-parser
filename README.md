@@ -3,6 +3,15 @@ Command line arguments parser
 
 **WIP**
 
+## Get Started
+
+Add the library in the build.sbt
+```
+  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+  
+  libraryDependencies += "io.github.francoiscabrol" %%% "scala-args-parser" % "0.1-SNAPSHOT"
+```
+
 ## Syntax
 
 Simple app with a simple action (`sbt run doAction`)
@@ -50,3 +59,7 @@ object SimpleApp {
 
 ## Examples
 See a [good example](https://github.com/francoiscabrol/gitmaster/blob/master/src/main/scala/com/francoiscabrol/gitmaster/gmaster.scala) in the gitmaster's repository and in the [unit tests](https://github.com/francoiscabrol/scala-args-parser/blob/master/src/test/scala/argsparser/ParserTest.scala).
+
+
+## Unit tests
+Run the unit tests with `sbt test`
