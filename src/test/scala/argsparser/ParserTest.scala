@@ -35,7 +35,7 @@ class ParserTest extends FlatSpec with GivenWhenThen {
     assert(actions.contains(action1))
   }
 
-  it should "return the action1" in {
+  it should "return the good action" in {
     val parser = new Parser(help = false)
     parser register action1
     parser register action2
@@ -53,6 +53,16 @@ class ParserTest extends FlatSpec with GivenWhenThen {
     parser register param1
     val (_, params) = parser.parse(Array("--param1", "value1"))
     assert(params.contains(param1))
+  }
+
+  it should "parse the param" in {
+    val parser = new Parser(help = false)
+    parser register action1
+    parser register param1
+    And("with param1=value")
+    val (_, params) = parser.parse(Array("--param1=value1"))
+    assert(params.contains(param1))
+    assert(param1.value == "value1")
   }
 
   it should "throw an error if the param value is not passed" in {

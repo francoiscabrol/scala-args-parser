@@ -2,7 +2,17 @@ package argsparser
 
 import scala.collection.mutable.ListBuffer
 
-case class Param[T](description: String, cmd: String, defaultValue: T) {
+trait ArgsCommandParser {
+  val cmd: String
+  val commands = cmd.split("\\|")
+  require(commands.size >= 1, "One command should be at least defined")
+
+  def matchCommand(str: String): Boolean = {
+    commands.contains(str)
+  }
+}
+
+case class Param[T](description: String, cmd: String, defaultValue: T) extends ArgsCommandParser {
 
   private var _value: Option[T] = None
 
@@ -10,7 +20,7 @@ case class Param[T](description: String, cmd: String, defaultValue: T) {
   def value_=(nval:T): Unit = _value = Some(nval)
 }
 
-case class Action(description: String, cmd: String, nargs: Int = 0, task: (Array[String]) => Unit) {
+case class Action(description: String, cmd: String, nargs: Int = 0, task: (Array[String]) => Unit) extends ArgsCommandParser {
 
   var args:Array[String] = Array()
 
@@ -33,9 +43,9 @@ class Parser(help: Boolean = false) {
   private val _params = ListBuffer[Param[_]]()
 
   val helpAction = new Action(
-    cmd = "--help",
+    cmd = "--help|-h",
     description = "Show this help.",
-    task = (args: Array[String]) => {
+    task = {
       println("Actions")
       println(actions.map(action => {
         println(action.cmd + " " + action.description)
@@ -49,7 +59,7 @@ class Parser(help: Boolean = false) {
   val undefinedAction = new Action(
     cmd = "undefined",
     description = "undefined",
-    task = (args: Array[String]) => {
+    task = {
       println("No action by default.")
     }
   )
@@ -67,9 +77,15 @@ class Parser(help: Boolean = false) {
 
   private def defaultAction: Action = if (help == true) helpAction else undefinedAction
 
+
   def parse(args: Array[String], default: Action = defaultAction): (Set[Action], Set[Param[_]]) = {
-    parseArgs(args, default)
+    parseArgs(preParse(args), default)
   }
+
+  /*
+   *  Ignore the = character between the params and the values
+   */
+  private def preParse(args: Array[String]): Array[String] = args.flatMap(_.split("="))
 
   private def parseArgs(args: Array[String], defaultAction: Action, actions: Set[Action] = Set(), options: Set[Param[_]] = Set()): (Set[Action], Set[Param[_]]) = {
     def addParam[T](param: Param[T]) = {
@@ -87,6 +103,7 @@ class Parser(help: Boolean = false) {
         }
       }
     }
+
     def addAction(action: Action) = {
       val actionArguments = args.take(action.nargs + 1).drop(1)
       action.args = actionArguments
@@ -94,14 +111,14 @@ class Parser(help: Boolean = false) {
       parseArgs(args.drop(1 + action.nargs), defaultAction, actions + action, options)
     }
 
-    args match {
+    preParse(args) match {
       case args if args.isEmpty => actions match {
         case actions if actions.isEmpty => (Set(defaultAction), options)
         case _ => (actions, options)
       }
-      case _ => _params.find(_.cmd == args(0)) match {
+      case _ => _params.find(_.matchCommand(args(0))) match {
         case Some(param) => addParam(param)
-        case None => _actions.find(_.cmd == args(0)) match {
+        case None => _actions.find(_.matchCommand(args(0))) match {
           case Some(action) => addAction(action)
           case None => throw new IllegalArgumentException(s"Action or param '${args(0)}' is not valid. See help.")
         }
