@@ -1,7 +1,7 @@
 # scala-args-parser
 Command line arguments parser
 
-**WIP**
+**This library is a snapshot but a release is coming. It can work with Scala JVM and Scala-native (and probably Scala.js)**
 
 ## Get Started
 
