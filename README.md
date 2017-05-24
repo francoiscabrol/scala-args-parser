@@ -41,16 +41,16 @@ Command line arguments parser
 
 6. Compile and run you app `sbt run hello`
 
-7. Go 
-
 ## Examples
 
-1. Simple app with a simple action (`sbt run doAction`)
+1. Simple app with a simple action (`sbt run hello`)
+[See it running on Scastie](https://scastie.scala-lang.org/francoiscabrol/UtRWLlPWTOWB8GgiKmM34w/0)
+
 ```scala
 object SimpleApp {
   val parser = new Parser()
   parser register new Action(
-    cmd = "doAction",
+    cmd = "hello",
     description = "print Hello World",
     task = {
       println("Hello World.")
