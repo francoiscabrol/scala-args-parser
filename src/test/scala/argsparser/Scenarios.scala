@@ -15,13 +15,9 @@ class Scenarios extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       Given("a Simple app")
       object SimpleApp {
         val parser = new Parser()
-        parser register new Action(
-          cmd = "hello",
-          description = "print Hello World",
-          task = {
-            println("Hello World.")
-          }
-        )
+        parser register new Action(cmd = "hello", description = "print Hello World", task = {
+          println("Hello World.")
+        })
 
         def apply(args: Array[String]) {
           val (actions, _) = parser.parse(args)
@@ -45,7 +41,7 @@ class Scenarios extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
         parser register new Action(
           cmd = "hello",
           description = "print Hello World",
-          nargs=1,
+          nargs = 1,
           task = (args: Array[String]) => {
             println(args(0) + " World.")
           }
@@ -74,7 +70,7 @@ class Scenarios extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
         parser register new Action(
           cmd = "hello",
           description = "print args(0) World",
-          nargs=1,
+          nargs = 1,
           task = (args: Array[String]) => {
             val str = args(0) + " World."
             println(if (uppercaseParam.value) str.toUpperCase else str)

@@ -17,14 +17,16 @@ case class Param[T](description: String, cmd: String, defaultValue: T) extends A
   private var _value: Option[T] = None
 
   def value: T = _value.getOrElse(defaultValue)
-  def value_=(nval:T): Unit = _value = Some(nval)
+  def value_=(nval: T): Unit = _value = Some(nval)
 }
 
-case class Action(description: String, cmd: String, nargs: Int = 0, task: (Array[String]) => Unit) extends ArgsCommandParser {
+case class Action(description: String, cmd: String, nargs: Int = 0, task: (Array[String]) => Unit)
+    extends ArgsCommandParser {
 
-  var args:Array[String] = Array()
+  var args: Array[String] = Array()
 
-  def this(description: String, cmd: String, task: => Unit) = this(description, cmd, 0, (args: Array[String]) => task)
+  def this(description: String, cmd: String, task: => Unit) =
+    this(description, cmd, 0, (args: Array[String]) => task)
 
   def contract: Unit = {
     require(args.size == nargs, s"The action $cmd require $nargs arguments. See help.")
@@ -34,7 +36,8 @@ case class Action(description: String, cmd: String, nargs: Int = 0, task: (Array
 }
 
 object Action {
-  def apply(description: String, cmd: String, task: => Unit) = new Action(description, cmd, 0, (args: Array[String]) => task)
+  def apply(description: String, cmd: String, task: => Unit) =
+    new Action(description, cmd, 0, (args: Array[String]) => task)
 }
 
 class Parser(help: Boolean = false) {
@@ -42,27 +45,20 @@ class Parser(help: Boolean = false) {
   private val _actions = ListBuffer[Action]()
   private val _params = ListBuffer[Param[_]]()
 
-  val helpAction = new Action(
-    cmd = "--help|-h",
-    description = "Show this help.",
-    task = {
-      println("Actions")
-      println(actions.map(action => {
-        println(action.cmd + " " + action.description)
-      }))
-      println("Params")
-      println(params.map(param => {
-        println(param.cmd + " " + param.description)
-      }))
-    }
-  )
-  val undefinedAction = new Action(
-    cmd = "undefined",
-    description = "undefined",
-    task = {
+  val helpAction = new Action(cmd = "--help|-h", description = "Show this help.", task = {
+    println("Actions")
+    println(actions.map(action => {
+      println(action.cmd + " " + action.description)
+    }))
+    println("Params")
+    println(params.map(param => {
+      println(param.cmd + " " + param.description)
+    }))
+  })
+  val undefinedAction =
+    new Action(cmd = "undefined", description = "undefined", task = {
       println("No action by default.")
-    }
-  )
+    })
 
   def actions = _actions.toList
   def params = _params.toList
@@ -75,8 +71,8 @@ class Parser(help: Boolean = false) {
     obj
   }
 
-  private def defaultAction: Action = if (help == true) helpAction else undefinedAction
-
+  private def defaultAction: Action =
+    if (help == true) helpAction else undefinedAction
 
   def parse(args: Array[String], default: Action = defaultAction): (Set[Action], Set[Param[_]]) = {
     parseArgs(preParse(args), default)
@@ -85,22 +81,25 @@ class Parser(help: Boolean = false) {
   /*
    *  Ignore the = character between the params and the values
    */
-  private def preParse(args: Array[String]): Array[String] = args.flatMap(_.split("="))
+  private def preParse(args: Array[String]): Array[String] =
+    args.flatMap(_.split("="))
 
-  private def parseArgs(args: Array[String], defaultAction: Action, actions: Set[Action] = Set(), options: Set[Param[_]] = Set()): (Set[Action], Set[Param[_]]) = {
-    def addParam[T](param: Param[T]) = {
-      param match {
-        case p: Param[T] if p.defaultValue.isInstanceOf[String] => {
-          val param = p.asInstanceOf[Param[String]]
-          if (args.size < 2) throw new IllegalArgumentException(s"The param '${param.cmd}' require one value.")
-          param.value = args(1)
-          parseArgs(args.drop(2), defaultAction, actions, options + param)
-        }
-        case p:Param[T] if p.defaultValue.isInstanceOf[Boolean] => {
-          val param = p.asInstanceOf[Param[Boolean]]
-          param.value = !param.defaultValue
-          parseArgs(args.drop(1), defaultAction, actions, options + param)
-        }
+  private def parseArgs(args: Array[String],
+                        defaultAction: Action,
+                        actions: Set[Action] = Set(),
+                        options: Set[Param[_]] = Set()): (Set[Action], Set[Param[_]]) = {
+    def addParam[T](param: Param[T]) = param match {
+      case p: Param[T] if p.defaultValue.isInstanceOf[String] => {
+        val param = p.asInstanceOf[Param[String]]
+        if (args.size < 2)
+          throw new IllegalArgumentException(s"The param '${param.cmd}' require one value.")
+        param.value = args(1)
+        parseArgs(args.drop(2), defaultAction, actions, options + param)
+      }
+      case p: Param[T] if p.defaultValue.isInstanceOf[Boolean] => {
+        val param = p.asInstanceOf[Param[Boolean]]
+        param.value = !param.defaultValue
+        parseArgs(args.drop(1), defaultAction, actions, options + param)
       }
     }
 
@@ -112,18 +111,21 @@ class Parser(help: Boolean = false) {
     }
 
     preParse(args) match {
-      case args if args.isEmpty => actions match {
-        case actions if actions.isEmpty => (Set(defaultAction), options)
-        case _ => (actions, options)
-      }
-      case _ => _params.find(_.matchCommand(args(0))) match {
-        case Some(param) => addParam(param)
-        case None => _actions.find(_.matchCommand(args(0))) match {
-          case Some(action) => addAction(action)
-          case None => throw new IllegalArgumentException(s"Action or param '${args(0)}' is not valid. See help.")
+      case args if args.isEmpty =>
+        actions match {
+          case actions if actions.isEmpty => (Set(defaultAction), options)
+          case _ => (actions, options)
         }
-      }
+      case _ =>
+        _params.find(_.matchCommand(args(0))) match {
+          case Some(param) => addParam(param)
+          case None =>
+            _actions.find(_.matchCommand(args(0))) match {
+              case Some(action) => addAction(action)
+              case None =>
+                throw new IllegalArgumentException(s"Action or param '${args(0)}' is not valid. See help.")
+            }
+        }
     }
   }
 }
-

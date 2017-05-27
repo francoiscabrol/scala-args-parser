@@ -3,21 +3,13 @@ package argsparser
 import org.scalatest.{FlatSpec, GivenWhenThen}
 
 class ParserTest extends FlatSpec with GivenWhenThen {
-  val action1 = new Action(
-    cmd = "action1",
-    description = "Action 1",
-    task = {
-      println("Action 1 executed.")
-    }
-  )
+  val action1 = new Action(cmd = "action1", description = "Action 1", task = {
+    println("Action 1 executed.")
+  })
 
-  val action2 = new Action(
-    cmd = "action2",
-    description = "Action 2",
-    task = {
-      println("Action 2 executed.")
-    }
-  )
+  val action2 = new Action(cmd = "action2", description = "Action 2", task = {
+    println("Action 2 executed.")
+  })
 
   val param1 = new Param[String]("Param 1", "--param1", "default value")
 

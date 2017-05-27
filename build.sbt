@@ -8,13 +8,14 @@ scalaVersion := "2.11.5"
 
 crossScalaVersions := Seq("2.11.8", "2.12.2")
 
+enablePlugins(ScalafmtPlugin)
+
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.1" % "test" withSources() withJavadoc(),
   "org.scalacheck" %% "scalacheck" % "1.12.1" % "test" withSources() withJavadoc()
 )
 
 scalacOptions := Seq("-feature", "-deprecation")
-
 
 initialCommands := "import argsparser._"
 
