@@ -1,7 +1,7 @@
 # scala-args-parser
 Command line arguments parser
 
-**This library is a snapshot but a release is coming. It can work with Scala JVM and Scala-native (and probably Scala.js)**
+**This library is a snapshot but a release is coming. Currently, I support the JVM. But I did some tests and it can be compiled for Scala-native, The only thing to do is to configure the sbt-crossproject** things.**
 
 ## Get Started
 
