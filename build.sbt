@@ -4,15 +4,15 @@ organization := "io.github.francoiscabrol"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.12.2"
 
 crossScalaVersions := Seq("2.11.8", "2.12.2")
 
 enablePlugins(ScalafmtPlugin)
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test" withSources() withJavadoc(),
-  "org.scalacheck" %% "scalacheck" % "1.12.1" % "test" withSources() withJavadoc()
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test" withSources() withJavadoc(),
+  "org.scalacheck" %% "scalacheck" % "3.0.1" % "test" withSources() withJavadoc()
 )
 
 scalacOptions := Seq("-feature", "-deprecation")
